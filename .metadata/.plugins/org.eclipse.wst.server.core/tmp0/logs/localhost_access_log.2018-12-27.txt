@@ -1,0 +1,15 @@
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:04:00 -0600] "GET /Nokona/hello/sayHello/mark HTTP/1.1" 200 125
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:04:18 -0600] "GET /Nokona/employee/mark HTTP/1.1" 200 128
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:04:41 -0600] "GET /Nokona/employee/Yo HTTP/1.1" 404 24
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:04:48 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 200 128
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:06:06 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 200 128
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:07:29 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 200 128
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:22:13 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 200 128
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:23:02 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:23:46 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:24:56 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:27:25 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:29:24 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:30:30 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:32:54 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 500 226
+0:0:0:0:0:0:0:1 - - [27/Dec/2018:12:33:51 -0600] "GET /Nokona/employee/Yoo HTTP/1.1" 200 128

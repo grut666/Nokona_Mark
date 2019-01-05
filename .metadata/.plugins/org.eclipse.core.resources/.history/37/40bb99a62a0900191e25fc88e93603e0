@@ -1,0 +1,14 @@
+package com.usaa.exceptions;
+
+public class DuplicateDataException extends DatabaseException {
+
+	public DuplicateDataException(String msg) {
+		super(msg);
+		// TODO Auto-generated constructor stub
+	}
+	public DuplicateDataException(String msg, Exception ex) {
+		super(msg, ex);
+		// TODO Auto-generated constructor stub
+	}
+
+}

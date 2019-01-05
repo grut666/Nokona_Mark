@@ -1,0 +1,74 @@
+package com.data.db;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+
+import com.nokona.data.NokonaDatabase;
+import com.nokona.model.Employee;
+import com.usaa.exceptions.DataNotFoundException;
+import com.usaa.exceptions.DuplicateDataException;
+@Default
+public class NokonaDAO implements NokonaDatabase {
+	public NokonaDAO() {
+		
+	}
+	
+	@Override
+	public List<Employee> getEmployees() {
+		List<Employee> employees = new ArrayList<Employee>();
+		try {
+			Employee emp = getEmployee(10);
+			employees.add(emp);
+		} catch (DataNotFoundException e) {
+			return employees;
+		}
+		
+		return employees;
+	}
+
+	@Override
+	public Employee getEmployee(int key) throws DataNotFoundException {
+		// TODO Auto-generated method stub
+		
+			if (key == 12) {
+				throw new DataNotFoundException("No such key " + key);
+			}
+		
+		return new Employee(5, "Waggoner", "Mark", 12345, 23456, "MWag", true);
+		
+	}
+
+	@Override
+	public Employee getEmployee(String empID) throws DataNotFoundException {
+		// TODO Auto-generated method stub
+		
+			if ("Yo".equalsIgnoreCase(empID)) {
+				throw new DataNotFoundException("No such empID " + empID);
+			}
+		
+		
+		return new Employee(6, "Morales", "Justin", 98765, 87654, "JMor", false);
+	}
+
+	@Override
+	public void putEmployee(Employee employee) throws DuplicateDataException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteEmployee(int key) throws DataNotFoundException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteEmployee(String empID) throws DataNotFoundException {
+		// TODO Auto-generated method stub
+
+	}
+
+}

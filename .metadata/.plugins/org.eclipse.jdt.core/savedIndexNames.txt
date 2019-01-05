@@ -1,0 +1,2 @@
+INDEX VERSION 1.130+C:\codebase\Nokona\.metadata\.plugins\org.eclipse.jdt.core
+865741978.index

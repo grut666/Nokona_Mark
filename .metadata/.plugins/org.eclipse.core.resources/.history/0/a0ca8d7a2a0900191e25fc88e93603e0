@@ -1,0 +1,5 @@
+package com.usaa.exceptions;
+
+public class DataNotFoundException extends DatabaseException {
+
+}

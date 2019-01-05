@@ -1,0 +1,14 @@
+package com.usaa.exceptions;
+
+public class DataNotFoundException extends DatabaseException {
+
+	public DataNotFoundException(String msg) {
+		super(msg);
+		// TODO Auto-generated constructor stub
+	}
+	public DataNotFoundException(String msg, Exception ex) {
+		super(msg, ex);
+		// TODO Auto-generated constructor stub
+	}
+
+}

@@ -1,0 +1,21 @@
+package com.nokona.testing;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
+import javax.inject.Inject;
+
+import org.junit.jupiter.api.Test;
+
+import com.data.db.NokonaDAO;
+import com.nokona.data.NokonaDatabase;
+
+class TestDB {
+	@Inject
+	private static NokonaDatabase db;
+	@Test
+	void test() {
+		assertTrue("Null db", db != null);
+	}
+
+}

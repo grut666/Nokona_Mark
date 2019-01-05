@@ -1,0 +1,12 @@
+127.0.0.1 - - [25/Dec/2018:12:51:51 -0600] "GET / HTTP/1.1" 404 1024
+127.0.0.1 - - [25/Dec/2018:13:16:11 -0600] "GET / HTTP/1.1" 404 1024
+127.0.0.1 - - [25/Dec/2018:13:19:57 -0600] "GET / HTTP/1.1" 404 1024
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:20:49 -0600] "GET /Nokona/Mark.html HTTP/1.1" 200 131
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:21:04 -0600] "GET /Nokona//hello HTTP/1.1" 404 -
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:21:34 -0600] "GET /Nokona/Mark.html HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:21:46 -0600] "GET /Nokona/hello/sayHello/Mark HTTP/1.1" 200 15
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:22:02 -0600] "GET /Nokona/hello/sayHello/Fred HTTP/1.1" 200 15
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:26:10 -0600] "GET /Nokona/hello/sayHello/Fred HTTP/1.1" 200 15
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:26:12 -0600] "GET /Nokona/hello/sayHello/Fred HTTP/1.1" 200 15
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:26:13 -0600] "GET /Nokona/hello/sayHello/Fred HTTP/1.1" 200 15
+0:0:0:0:0:0:0:1 - - [25/Dec/2018:13:26:22 -0600] "GET /Nokona/hello/sayHello/Willie HTTP/1.1" 200 17

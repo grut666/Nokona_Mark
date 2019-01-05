@@ -1,0 +1,5 @@
+export default {
+    JOBS: 'JOBS',
+    JOBS_SEGMENTS: 'JOBS_SEGMENTS',
+    RAW_MATERIALS: 'RAW_MATERIALS',
+}

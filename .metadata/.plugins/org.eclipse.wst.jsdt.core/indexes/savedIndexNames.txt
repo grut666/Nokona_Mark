@@ -1,0 +1,2 @@
+INDEX VERSION 1.4+C:\codebase\Nokona\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+1313987455.index

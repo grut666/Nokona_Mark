@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move &apos;application&apos; to &apos;nokona&apos;" description="Move &apos;application&apos; to &apos;nokona&apos;" destination="NokonaAPI/src/com/nokona" element1="NokonaAPI/src/com/nocona/application" flags="7" id="org.eclipse.ltk.core.refactoring.move.resources" resources="1" stamp="1545949692774" updateReferences="true"/>
+</session>
