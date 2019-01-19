@@ -19,7 +19,7 @@ public class NokonaEmployeeResource {
 	private NokonaDatabase db;
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/employee/{user}")
+	@Path("/employees/{user}")
 	public Response getEmployee(@PathParam("user") String user) 
 	{
 		int key = -1;
