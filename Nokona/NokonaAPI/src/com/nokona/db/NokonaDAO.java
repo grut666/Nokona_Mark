@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Default;
-import javax.inject.Inject;
 
 import com.nokona.data.NokonaDatabase;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
 import com.nokona.exceptions.DuplicateDataException;
+import com.nokona.formatter.EmployeeFormatter;
 import com.nokona.model.Employee;
+import com.nokona.model.Operation;
 
 @Default
 public class NokonaDAO implements NokonaDatabase {
@@ -24,11 +25,15 @@ public class NokonaDAO implements NokonaDatabase {
 	private static String USER_NAME = "root";
 	private static String PASSWORD = "xyz123";
 	private Connection conn;
+
 	PreparedStatement psGetEmployeeByKey;
 	PreparedStatement psGetEmployeeByEmpId;
 	PreparedStatement psGetEmployees;
+	PreparedStatement psPutEmployee;
 
-
+	PreparedStatement psGetOperationByKey;
+	PreparedStatement psGetOperationByOpCode;
+	PreparedStatement psGetOperations;
 
 	public NokonaDAO() throws DatabaseException {
 		connectToDB();
@@ -46,51 +51,51 @@ public class NokonaDAO implements NokonaDatabase {
 				System.err.println(e.getMessage());
 				throw new DatabaseException(e.getMessage(), e);
 			}
-//			try {
-//				conn.close();
-//			} catch (SQLException e) {
-//				System.err.println(e.getMessage());
-//				throw new DatabaseException(e.getMessage(), e);
-//			}
+			// try {
+			// conn.close();
+			// } catch (SQLException e) {
+			// System.err.println(e.getMessage());
+			// throw new DatabaseException(e.getMessage(), e);
+			// }
 		}
 	}
 
 	@Override
-	public List<Employee> getEmployees() {
+	public List<Employee> getEmployees() throws DatabaseException {
 		List<Employee> employees = new ArrayList<Employee>();
 		if (psGetEmployees == null) {
 			try {
 				psGetEmployees = conn.prepareStatement("Select * from Employee order by EmpID");
-				
+
 			} catch (SQLException e) {
-				System.err.println(e.getMessage());
+				throw new DatabaseException(e.getMessage(), e);
 			}
 		}
 		try {
 			ResultSet rs = psGetEmployees.executeQuery();
 			while (rs.next()) {
 				employees.add(convertEmployeeFromResultSet(rs));
-			} 
+			}
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
+			throw new DatabaseException(e.getMessage(), e);
 		}
 		return employees;
 	}
 
 	@Override
-	public Employee getEmployee(int key) throws DataNotFoundException {
+	public Employee getEmployee(long key) throws DatabaseException {
 		Employee emp = null;
 		if (psGetEmployeeByKey == null) {
 			try {
 				psGetEmployeeByKey = conn.prepareStatement("Select * from Employee where Employee.key = ?");
-				
+
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());
-				throw new DataNotFoundException(e.getMessage());
+				throw new DatabaseException(e.getMessage(), e);
 			}
 		}
 		try {
-			psGetEmployeeByKey.setInt(1,  key);
+			psGetEmployeeByKey.setLong(1, key);
 			ResultSet rs = psGetEmployeeByKey.executeQuery();
 			if (rs.next()) {
 				emp = convertEmployeeFromResultSet(rs);
@@ -99,37 +104,24 @@ public class NokonaDAO implements NokonaDatabase {
 			}
 		} catch (SQLException e) {
 			System.err.println(e.getMessage());
-			throw new DataNotFoundException(e.getMessage(), e);
+			throw new DatabaseException(e.getMessage(), e);
 		}
-		return emp;
+		return EmployeeFormatter.format(emp);
 
 	}
-
-	private Employee convertEmployeeFromResultSet(ResultSet rs) throws SQLException {
-		int key = rs.getInt("Key");
-		String lName = rs.getString("LastName");
-		String fName = rs.getString("FirstName");
-		int  barCodeId = rs.getInt("BarCodeID");
-		int laborCode =  rs.getInt("LaborCode");
-		String empId =  rs.getString("EmpID");
-		boolean active = (rs.getInt("Active") > 0) ? true : false;
-		return new Employee(key, lName, fName, barCodeId, laborCode, empId, active);
-	}
-
 	@Override
-	public Employee getEmployee(String empID) throws DataNotFoundException {
+	public Employee getEmployee(String empID) throws DatabaseException {
 		Employee emp = null;
 		if (psGetEmployeeByEmpId == null) {
 			try {
 				psGetEmployeeByEmpId = conn.prepareStatement("Select * from Employee where Employee.EmpID = ?");
-				
+
 			} catch (SQLException e) {
-				System.err.println(e.getMessage());
-				throw new DataNotFoundException(e.getMessage());
+				throw new DatabaseException(e.getMessage(), e);
 			}
 		}
 		try {
-			psGetEmployeeByEmpId.setString(1,  empID);
+			psGetEmployeeByEmpId.setString(1, empID);
 			ResultSet rs = psGetEmployeeByEmpId.executeQuery();
 			if (rs.next()) {
 				emp = convertEmployeeFromResultSet(rs);
@@ -137,20 +129,67 @@ public class NokonaDAO implements NokonaDatabase {
 				throw new DataNotFoundException("Employee EmpID " + empID + " is not in DB");
 			}
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			throw new DataNotFoundException(e.getMessage(), e);
+
+			throw new DatabaseException(e.getMessage(), e);
 		}
 		return emp;
 	}
 
+	private Employee convertEmployeeFromResultSet(ResultSet rs) throws SQLException {
+		int key = rs.getInt("Key");
+		String lName = rs.getString("LastName");
+		String fName = rs.getString("FirstName");
+		int barCodeId = rs.getInt("BarCodeID");
+		int laborCode = rs.getInt("LaborCode");
+		String empId = rs.getString("EmpID");
+		boolean active = (rs.getInt("Active") > 0) ? true : false;
+		return EmployeeFormatter.format(new Employee(key, lName, fName, barCodeId, laborCode, empId, active));
+	}
+
 	@Override
-	public void putEmployee(Employee employee) throws DuplicateDataException {
-		// TODO Auto-generated method stub
+	public Employee putEmployee(Employee employeeIn) throws DatabaseException {
+
+		if (psPutEmployee == null) {
+			try {
+				psPutEmployee = conn.prepareStatement(
+						"Insert into Employee (LastName, FirstName, BarCodeID, LaborCode, EmpID, Active) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DatabaseException(e.getMessage());
+			}
+		}
+		Employee formattedEmployee = EmployeeFormatter.format(employeeIn);
+		try {
+			psPutEmployee.setString(1, formattedEmployee.getLastName());
+			psPutEmployee.setString(2, formattedEmployee.getFirstName());
+			psPutEmployee.setInt(3, formattedEmployee.getBarCodeID());
+			psPutEmployee.setInt(4, formattedEmployee.getLaborCode());
+			psPutEmployee.setString(5, formattedEmployee.getEmpId());
+			psPutEmployee.setInt(6, formattedEmployee.isActive() ? 1 : 0);
+			int rowCount = psPutEmployee.executeUpdate();
+
+			if (rowCount != 1) {
+				throw new DatabaseException("Error.  Inserted " + rowCount + " rows");
+			}
+			Employee newEmp = new Employee();
+			try (ResultSet generatedKeys = psPutEmployee.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					newEmp.setKey(generatedKeys.getLong(1));
+					return getEmployee(generatedKeys.getLong(1));
+				} else {
+					throw new SQLException("Creating user failed, no ID obtained.");
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DuplicateDataException(e.getMessage(), e);
+		}
 
 	}
 
 	@Override
-	public void deleteEmployee(int key) throws DataNotFoundException {
+	public void deleteEmployee(long key) throws DataNotFoundException {
 		// TODO Auto-generated method stub
 
 	}
@@ -159,6 +198,93 @@ public class NokonaDAO implements NokonaDatabase {
 	public void deleteEmployee(String empID) throws DataNotFoundException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Operation getOperation(long key) throws DataNotFoundException {
+		Operation operation = null;
+		if (psGetOperationByKey == null) {
+			try {
+				psGetOperationByKey = conn.prepareStatement("Select * from Operation where Operation.key = ?");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DataNotFoundException(e.getMessage());
+			}
+		}
+		try {
+			psGetOperationByKey.setLong(1, key);
+			ResultSet rs = psGetOperationByKey.executeQuery();
+			if (rs.next()) {
+				operation = convertOperationFromResultSet(rs);
+			} else {
+				throw new DataNotFoundException("Operation key " + key + " is not in DB");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DataNotFoundException(e.getMessage(), e);
+		}
+		return operation;
+	}
+
+	@Override
+	public Operation getOperation(String opCode) throws DataNotFoundException {
+		Operation operation = null;
+		if (psGetOperationByOpCode == null) {
+			try {
+				psGetOperationByOpCode = conn.prepareStatement("Select * from Operation where Operation.OpCode = ?");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DataNotFoundException(e.getMessage());
+			}
+		}
+		try {
+			psGetOperationByOpCode.setString(1, opCode);
+			ResultSet rs = psGetOperationByOpCode.executeQuery();
+			if (rs.next()) {
+				operation = convertOperationFromResultSet(rs);
+			} else {
+				throw new DataNotFoundException("Operation OPCode " + opCode + " is not in DB");
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DataNotFoundException(e.getMessage(), e);
+		}
+		return operation;
+	}
+
+	@Override
+	public List<Operation> getOperations() {
+		List<Operation> operations = new ArrayList<Operation>();
+		if (psGetOperations == null) {
+			try {
+				psGetOperations = conn.prepareStatement("Select * from Operation order by opCode");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		try {
+			ResultSet rs = psGetOperations.executeQuery();
+			while (rs.next()) {
+				operations.add(convertOperationFromResultSet(rs));
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		}
+		return operations;
+	}
+
+	private Operation convertOperationFromResultSet(ResultSet rs) throws SQLException {
+		int key = rs.getInt("Key");
+		String opCode = rs.getString("OpCode");
+		String description = rs.getString("Description");
+		double hourlyRateSAH = rs.getDouble("HourlyRateSAH");
+		int laborCode = rs.getInt("LaborCode");
+		int lastStudyYear = rs.getInt("LastStudyYear");
+
+		return new Operation(opCode, description, hourlyRateSAH, laborCode, key, lastStudyYear);
 	}
 
 }

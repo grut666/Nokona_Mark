@@ -2,16 +2,19 @@ package com.nokona.data;
 
 import java.util.List;
 
-import com.nokona.exceptions.DataNotFoundException;
-import com.nokona.exceptions.DuplicateDataException;
+import com.nokona.exceptions.DatabaseException;
 import com.nokona.model.Employee;
+import com.nokona.model.Operation;
 
 public interface NokonaDatabase {
-	List<Employee> getEmployees();
-	Employee getEmployee(int key) throws DataNotFoundException;
-	Employee getEmployee(String empID) throws DataNotFoundException;
-	void putEmployee(Employee employee) throws DuplicateDataException;
-	void deleteEmployee(int key) throws DataNotFoundException;
-	void deleteEmployee(String empID) throws DataNotFoundException;
+	List<Employee> getEmployees() throws DatabaseException;
+	Employee getEmployee(long key) throws DatabaseException;
+	Employee getEmployee(String empID) throws DatabaseException;
+	Employee putEmployee(Employee employee) throws DatabaseException;
+	void deleteEmployee(long key) throws DatabaseException;
+	void deleteEmployee(String empID) throws DatabaseException;
+	Operation getOperation(long key) throws DatabaseException;
+	Operation getOperation(String operationIn) throws DatabaseException;
+	List<Operation> getOperations();
 	
 }

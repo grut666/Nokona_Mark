@@ -1,7 +1,7 @@
 package com.nokona.model;
 
 public class Employee {
-	int key;
+	long key;
 	String lastName;
 	String firstName;
 	int barCodeID;
@@ -21,10 +21,10 @@ public class Employee {
 		this.setEmpId(empId);
 		this.setActive(active);
 	}
-	public int getKey() {
+	public long getKey() {
 		return key;
 	}
-	public void setKey(int key) {
+	public void setKey(long key) {
 		this.key = key;
 	}
 	public String getLastName() {

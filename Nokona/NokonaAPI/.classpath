@@ -32,5 +32,6 @@
 	<classpathentry kind="lib" path="D:/Apache/apache-tomee-7.0.2-plume/apache-tomee-plume-7.0.2/lib/tomee-webservices-7.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/MySQL/Connector J 8.0/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="lib" path="D:/Nokona/Jars/gson-2.6.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
