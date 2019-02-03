@@ -1,7 +1,9 @@
 package com.nokona.resource;
 
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -61,7 +63,7 @@ public class NokonaEmployeeResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	// @Consumes(MediaType.APPLICATION_JSON)
 	@Path("/")
-	public Response putEmployee(String empIn) {
+	public Response updateEmployee(String empIn) {
 
 		// Employee emp = gson.fromJson(empIn, Employee.class);
 		Gson gson;
@@ -81,6 +83,53 @@ public class NokonaEmployeeResource {
 		}
 
 		return Response.status(200).entity(emp).build();
+	}
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	// @Consumes(MediaType.APPLICATION_JSON)
+	@Path("/")
+	public Response addEmployee(String empIn) {
+
+		// Employee emp = gson.fromJson(empIn, Employee.class);
+		Gson gson;
+		Employee emp;
+		try {
+			gson = new Gson();
+			emp = gson.fromJson(empIn, Employee.class);
+		} catch (JsonSyntaxException jse) {
+			return Response.status(400).entity(jse.getMessage()).build();
+		}
+		try {
+			emp = db.putEmployee(emp);
+		} catch (DuplicateDataException e) {
+			return Response.status(400).entity(e.getMessage()).build();
+		}catch (DatabaseException ex) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+
+		return Response.status(200).entity(emp).build();
+	}
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/{user}")
+	public Response deleteEmployee(@PathParam("user") String user) {
+		int key = -1;
+		if (user.matches("\\d+")) {
+			key = Integer.parseInt(user);
+		}
+		try {
+			if (key != -1) {
+				db.deleteEmployee(key);
+			} else {
+				db.deleteEmployee(user);
+			}
+		} catch (DataNotFoundException ex) {
+			return Response.status(404).entity("{\"error\":\"" + user + " not found\"}").build();
+		} catch (DatabaseException ex ) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+		
+		return Response.status(200).entity("{\"Success\":\"200\"}").build();
 	}
 
 }

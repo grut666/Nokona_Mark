@@ -14,9 +14,11 @@ import com.nokona.data.NokonaDatabase;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
 import com.nokona.exceptions.DuplicateDataException;
+import com.nokona.exceptions.NullInputDataException;
 import com.nokona.formatter.EmployeeFormatter;
 import com.nokona.model.Employee;
 import com.nokona.model.Operation;
+import com.nokona.validator.EmployeeValidator;
 
 @Default
 public class NokonaDAO implements NokonaDatabase {
@@ -35,6 +37,9 @@ public class NokonaDAO implements NokonaDatabase {
 	PreparedStatement psGetOperationByOpCode;
 	PreparedStatement psGetOperations;
 
+	PreparedStatement psDelEmployeeByKey;
+	PreparedStatement psDelEmployeeByEmpId;
+
 	public NokonaDAO() throws DatabaseException {
 		connectToDB();
 	}
@@ -44,6 +49,7 @@ public class NokonaDAO implements NokonaDatabase {
 			try {
 				Class.forName(JDBC_DRIVER);
 				conn = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
+				conn.setAutoCommit(true);
 			} catch (ClassNotFoundException e) {
 				System.err.println("Class not found: " + e.getMessage());
 
@@ -109,8 +115,12 @@ public class NokonaDAO implements NokonaDatabase {
 		return EmployeeFormatter.format(emp);
 
 	}
+
 	@Override
 	public Employee getEmployee(String empID) throws DatabaseException {
+		if (empID == null) {
+			throw new NullInputDataException("empID cannot be null");
+		}
 		Employee emp = null;
 		if (psGetEmployeeByEmpId == null) {
 			try {
@@ -152,7 +162,8 @@ public class NokonaDAO implements NokonaDatabase {
 		if (psPutEmployee == null) {
 			try {
 				psPutEmployee = conn.prepareStatement(
-						"Insert into Employee (LastName, FirstName, BarCodeID, LaborCode, EmpID, Active) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+						"Insert into Employee (LastName, FirstName, BarCodeID, LaborCode, EmpID, Active) values (?,?,?,?,?,?)",
+						PreparedStatement.RETURN_GENERATED_KEYS);
 
 			} catch (SQLException e) {
 				System.err.println(e.getMessage());
@@ -160,6 +171,10 @@ public class NokonaDAO implements NokonaDatabase {
 			}
 		}
 		Employee formattedEmployee = EmployeeFormatter.format(employeeIn);
+		String validateMessage = EmployeeValidator.validateUpdate(employeeIn, conn);
+		if (!"".equals(validateMessage)) {
+			throw new DatabaseException(validateMessage);
+		}
 		try {
 			psPutEmployee.setString(1, formattedEmployee.getLastName());
 			psPutEmployee.setString(2, formattedEmployee.getFirstName());
@@ -185,20 +200,63 @@ public class NokonaDAO implements NokonaDatabase {
 			System.err.println(e.getMessage());
 			throw new DuplicateDataException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public void deleteEmployee(long key) throws DatabaseException {
+		if (psDelEmployeeByKey == null) {
+			try {
+				psDelEmployeeByKey = conn.prepareStatement("Delete From Employee where BarCodeID = ?");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DatabaseException(e.getMessage());
+			}
+		}
+		try {
+			psDelEmployeeByKey.setLong(1, key);
+			int rowCount = psDelEmployeeByKey.executeUpdate();
+
+			if (rowCount == 0) {
+				throw new DataNotFoundException("Error.  Delete BarCode " + key + " failed");
+			}
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DatabaseException(e.getMessage(), e);
+		}
 
 	}
 
 	@Override
-	public void deleteEmployee(long key) throws DataNotFoundException {
-		// TODO Auto-generated method stub
+	public void deleteEmployee(String empID) throws DatabaseException {
+		if (empID == null) {
+			throw new NullInputDataException("empID cannot be null");
+		}
+		if (psDelEmployeeByEmpId == null) {
+			try {
+				psDelEmployeeByEmpId = conn.prepareStatement("Delete From Employee where EmpID = ?");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DatabaseException(e.getMessage());
+			}
+		}
+		try {
+			psDelEmployeeByEmpId.setString(1, empID);
+			int rowCount = psDelEmployeeByEmpId.executeUpdate();
+
+			if (rowCount == 0) {
+				throw new DataNotFoundException("Error.  Delete Emp ID " + empID + " failed");
+			}
+
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DatabaseException(e.getMessage(), e);
+		}
 
 	}
 
-	@Override
-	public void deleteEmployee(String empID) throws DataNotFoundException {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public Operation getOperation(long key) throws DataNotFoundException {
