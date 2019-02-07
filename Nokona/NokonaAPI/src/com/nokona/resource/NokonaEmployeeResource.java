@@ -75,7 +75,7 @@ public class NokonaEmployeeResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
-			emp = db.putEmployee(emp);
+			emp = db.updateEmployee(emp);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}catch (DatabaseException ex) {
@@ -100,13 +100,12 @@ public class NokonaEmployeeResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
-			emp = db.putEmployee(emp);
+			emp = db.addEmployee(emp);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}catch (DatabaseException ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
-
 		return Response.status(200).entity(emp).build();
 	}
 	@DELETE

@@ -31,7 +31,8 @@ public class NokonaDAO implements NokonaDatabase {
 	PreparedStatement psGetEmployeeByKey;
 	PreparedStatement psGetEmployeeByEmpId;
 	PreparedStatement psGetEmployees;
-	PreparedStatement psPutEmployee;
+	PreparedStatement psAddEmployee;
+	PreparedStatement psUpdateEmployee;
 
 	PreparedStatement psGetOperationByKey;
 	PreparedStatement psGetOperationByOpCode;
@@ -157,11 +158,50 @@ public class NokonaDAO implements NokonaDatabase {
 	}
 
 	@Override
-	public Employee putEmployee(Employee employeeIn) throws DatabaseException {
+	public Employee updateEmployee(Employee employeeIn) throws DatabaseException {
 
-		if (psPutEmployee == null) {
+		if (psUpdateEmployee == null) {
 			try {
-				psPutEmployee = conn.prepareStatement(
+				psUpdateEmployee = conn.prepareStatement(
+						"Update Employee Set LastName = ?, FirstName = ?, BarCodeID = ?, LaborCode = ?, EmpID = ?, Active = ? " +
+							"WHERE Employee.KEY = ?");
+
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+				throw new DatabaseException(e.getMessage());
+			}
+		}
+		Employee formattedEmployee = EmployeeFormatter.format(employeeIn);
+		String validateMessage = EmployeeValidator.validateUpdate(employeeIn, conn);
+		if (! "".equals(validateMessage)) {
+			throw new DatabaseException(validateMessage);
+		}
+		try {
+			psUpdateEmployee.setString(1, formattedEmployee.getLastName());
+			psUpdateEmployee.setString(2, formattedEmployee.getFirstName());
+			psUpdateEmployee.setInt(3, formattedEmployee.getBarCodeID());
+			psUpdateEmployee.setInt(4, formattedEmployee.getLaborCode());
+			psUpdateEmployee.setString(5, formattedEmployee.getEmpId());
+			psUpdateEmployee.setInt(6, formattedEmployee.isActive() ? 1 : 0);
+			psUpdateEmployee.setLong(7, formattedEmployee.getKey());
+			int rowCount = psUpdateEmployee.executeUpdate();
+
+			if (rowCount != 1) {
+				throw new DatabaseException("Error.  Inserted " + rowCount + " rows");
+			}
+			return getEmployee(formattedEmployee.getKey());
+			
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+			throw new DuplicateDataException(e.getMessage(), e);
+		}
+	}
+	@Override
+	public Employee addEmployee(Employee employeeIn) throws DatabaseException {
+
+		if (psAddEmployee == null) {
+			try {
+				psAddEmployee = conn.prepareStatement(
 						"Insert into Employee (LastName, FirstName, BarCodeID, LaborCode, EmpID, Active) values (?,?,?,?,?,?)",
 						PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -171,24 +211,24 @@ public class NokonaDAO implements NokonaDatabase {
 			}
 		}
 		Employee formattedEmployee = EmployeeFormatter.format(employeeIn);
-		String validateMessage = EmployeeValidator.validateUpdate(employeeIn, conn);
+		String validateMessage = EmployeeValidator.validateAdd(employeeIn, conn);
 		if (!"".equals(validateMessage)) {
 			throw new DatabaseException(validateMessage);
 		}
 		try {
-			psPutEmployee.setString(1, formattedEmployee.getLastName());
-			psPutEmployee.setString(2, formattedEmployee.getFirstName());
-			psPutEmployee.setInt(3, formattedEmployee.getBarCodeID());
-			psPutEmployee.setInt(4, formattedEmployee.getLaborCode());
-			psPutEmployee.setString(5, formattedEmployee.getEmpId());
-			psPutEmployee.setInt(6, formattedEmployee.isActive() ? 1 : 0);
-			int rowCount = psPutEmployee.executeUpdate();
+			psAddEmployee.setString(1, formattedEmployee.getLastName());
+			psAddEmployee.setString(2, formattedEmployee.getFirstName());
+			psAddEmployee.setInt(3, formattedEmployee.getBarCodeID());
+			psAddEmployee.setInt(4, formattedEmployee.getLaborCode());
+			psAddEmployee.setString(5, formattedEmployee.getEmpId());
+			psAddEmployee.setInt(6, formattedEmployee.isActive() ? 1 : 0);
+			int rowCount = psAddEmployee.executeUpdate();
 
 			if (rowCount != 1) {
 				throw new DatabaseException("Error.  Inserted " + rowCount + " rows");
 			}
 			Employee newEmp = new Employee();
-			try (ResultSet generatedKeys = psPutEmployee.getGeneratedKeys()) {
+			try (ResultSet generatedKeys = psAddEmployee.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 					newEmp.setKey(generatedKeys.getLong(1));
 					return getEmployee(generatedKeys.getLong(1));
@@ -201,7 +241,6 @@ public class NokonaDAO implements NokonaDatabase {
 			throw new DuplicateDataException(e.getMessage(), e);
 		}
 	}
-
 	@Override
 	public void deleteEmployee(long key) throws DatabaseException {
 		if (psDelEmployeeByKey == null) {
@@ -254,9 +293,7 @@ public class NokonaDAO implements NokonaDatabase {
 			System.err.println(e.getMessage());
 			throw new DatabaseException(e.getMessage(), e);
 		}
-
 	}
-
 
 	@Override
 	public Operation getOperation(long key) throws DataNotFoundException {

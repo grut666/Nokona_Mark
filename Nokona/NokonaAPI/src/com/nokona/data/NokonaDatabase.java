@@ -10,7 +10,8 @@ public interface NokonaDatabase {
 	List<Employee> getEmployees() throws DatabaseException;
 	Employee getEmployee(long key) throws DatabaseException;
 	Employee getEmployee(String empID) throws DatabaseException;
-	Employee putEmployee(Employee employee) throws DatabaseException;
+	Employee updateEmployee(Employee employee) throws DatabaseException;
+	Employee addEmployee(Employee employee) throws DatabaseException;
 	void deleteEmployee(long key) throws DatabaseException;
 	void deleteEmployee(String empID) throws DatabaseException;
 	Operation getOperation(long key) throws DatabaseException;
