@@ -2,8 +2,8 @@ package com.nokona.model;
 
 public class Employee {
 	long key;
-	String lastName;
-	String firstName;
+	private String lastName;
+	private String firstName;
 	int barCodeID;
 	int laborCode;
 	String empId;

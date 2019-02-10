@@ -1,11 +1,11 @@
 package com.nokona.model;
 
 public class Operation {
+	private long key;
 	private String opCode;
 	private String description;
 	private double hourlyRateSAH;
 	private int laborCode;
-	private int key;
 	private int lastStudyYear;
 	
 	public Operation() {
@@ -43,10 +43,10 @@ public class Operation {
 	public void setLaborCode(int laborCode) {
 		this.laborCode = laborCode;
 	}
-	public int getKey() {
+	public long getKey() {
 		return key;
 	}
-	public void setKey(int key) {
+	public void setKey(long key) {
 		this.key = key;
 	}
 	public int getLastStudyYear() {

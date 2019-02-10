@@ -13,7 +13,9 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.nokona.data.NokonaDatabase;
+import com.nokona.data.NokonaDatabaseEmp;
+import com.nokona.db.NokonaDAOMapper;
+import com.nokona.enums.DAOType;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
 import com.nokona.exceptions.DuplicateDataException;
@@ -22,7 +24,7 @@ import com.nokona.model.Employee;
 @Path("/employees")
 public class NokonaEmployeeResource {
 	@Inject
-	private NokonaDatabase db;
+	private NokonaDatabaseEmp db = (NokonaDatabaseEmp) NokonaDAOMapper.getDAO(DAOType.EMPLOYEE);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

@@ -6,11 +6,11 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
 
-import com.nokona.data.NokonaDatabase;
+import com.nokona.data.NokonaDatabaseEmp;
 
 class TestDB {
 	@Inject
-	private  NokonaDatabase db;
+	private  NokonaDatabaseEmp db;
 	@Test
 	void test() {
 		assertTrue("Null db", db != null);
