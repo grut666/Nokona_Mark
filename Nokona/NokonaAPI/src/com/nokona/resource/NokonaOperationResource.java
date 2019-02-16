@@ -1,6 +1,7 @@
 package com.nokona.resource;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,8 +14,9 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.nokona.data.NokonaDatabaseEmp;
 import com.nokona.data.NokonaDatabaseOperation;
-import com.nokona.db.NokonaDAOMapper;
+import com.nokona.db.NokonaDAOManager;
 import com.nokona.enums.DAOType;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
@@ -24,26 +26,29 @@ import com.nokona.model.Operation;
 @Path("/operations")
 public class NokonaOperationResource {
 	@Inject
-	private NokonaDatabaseOperation db = (NokonaDatabaseOperation) NokonaDAOMapper.getDAO(DAOType.OPERATION);
-
+	private NokonaDAOManager dbMgr;
+	@Inject @Named("x")
+	private NokonaDatabaseOperation db;
+	
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{operation}")
 	public Response getOperation(@PathParam("operation") String operation) {
-		int key = -1;
+		
 		Operation op;
-		if (operation.matches("\\d+")) {
-			key = Integer.parseInt(operation);
-		}
+		
 		try {
-			if (key != -1) {
-				op = db.getOperation(key);
-			} else {
+			getDB();
+			
 				op = db.getOperation(operation);
-			}
+	
 		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + operation + " not found\"}").build();
 		} catch (DatabaseException ex ) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+		catch (Exception ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 		
@@ -55,8 +60,12 @@ public class NokonaOperationResource {
 	@Path("/")
 	public Response getOperations() {
 		try {
+			getDB();
 			return Response.status(200).entity(db.getOperations()).build();
 		} catch (DatabaseException ex) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+		catch (Exception ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 	}
@@ -76,10 +85,14 @@ public class NokonaOperationResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
+			getDB();
 			op = db.updateOperation(op);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}catch (DatabaseException ex) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+		catch (Exception ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 
@@ -101,10 +114,14 @@ public class NokonaOperationResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
+			getDB();
 			op = db.addOperation(op);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}catch (DatabaseException ex) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
+		catch (Exception ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 		return Response.status(200).entity(op).build();
@@ -113,23 +130,28 @@ public class NokonaOperationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{operation}")
 	public Response deleteOperation(@PathParam("operation") String operation) {
-		int key = -1;
-		if (operation.matches("\\d+")) {
-			key = Integer.parseInt(operation);
-		}
+		
+		
 		try {
-			if (key != -1) {
-				db.deleteOperation(key);
-			} else {
+			getDB();
 				db.deleteOperation(operation);
-			}
+	
 		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + operation + " not found\"}").build();
 		} catch (DatabaseException ex ) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
+		catch (Exception ex) {
+			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
+		}
 		
 		return Response.status(200).entity("{\"Success\":\"200\"}").build();
+	}
+	private void getDB() throws DatabaseException {
+
+		if (db == null) {
+			db = (NokonaDatabaseOperation) NokonaDAOManager.getDAO(DAOType.OPERATION);
+		}
 	}
 
 }

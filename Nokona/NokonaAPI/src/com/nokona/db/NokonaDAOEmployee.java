@@ -1,5 +1,7 @@
 package com.nokona.db;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Default;
+import javax.inject.Named;
 
 import com.nokona.data.NokonaDatabaseEmp;
 import com.nokona.exceptions.DataNotFoundException;
@@ -17,8 +20,8 @@ import com.nokona.formatter.EmployeeFormatter;
 import com.nokona.model.Employee;
 import com.nokona.validator.EmployeeValidator;
 
-@Default
-public class NokonaDAOEmployee extends NokonaDAO implements NokonaDatabaseEmp {
+//@Default
+public class NokonaDAOEmployee extends NokonaDAO  implements NokonaDatabaseEmp {
 	public NokonaDAOEmployee() throws DatabaseException {
 		super();
 		

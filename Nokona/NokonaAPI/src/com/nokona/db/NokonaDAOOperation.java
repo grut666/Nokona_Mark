@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.inject.Default;
+
+import javax.inject.Named;
 
 import com.nokona.data.NokonaDatabaseOperation;
 import com.nokona.exceptions.DataNotFoundException;
@@ -18,7 +19,7 @@ import com.nokona.model.Operation;
 import com.nokona.validator.OperationValidator;
 
 
-@Default
+// @Named
 public class NokonaDAOOperation extends NokonaDAO implements NokonaDatabaseOperation {
 	public NokonaDAOOperation() throws DatabaseException {
 		super();
