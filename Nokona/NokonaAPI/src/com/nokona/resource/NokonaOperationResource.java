@@ -30,17 +30,17 @@ public class NokonaOperationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{operation}")
 	public Response getOperation(@PathParam("operation") String operation) {
-		int key = -1;
+//		int key = -1;
 		Operation op;
-		if (operation.matches("\\d+")) {
-			key = Integer.parseInt(operation);
-		}
+//		if (operation.matches("\\d+")) {
+//			key = Integer.parseInt(operation);
+//		}
 		try {
-			if (key != -1) {
-				op = db.getOperation(key);
-			} else {
+//			if (key != -1) {
+//				op = db.getOperation(key);
+//			} else {
 				op = db.getOperation(operation);
-			}
+//			}
 		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + operation + " not found\"}").build();
 		} catch (DatabaseException ex ) {
@@ -113,16 +113,16 @@ public class NokonaOperationResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{operation}")
 	public Response deleteOperation(@PathParam("operation") String operation) {
-		int key = -1;
-		if (operation.matches("\\d+")) {
-			key = Integer.parseInt(operation);
-		}
+//		int key = -1;
+//		if (operation.matches("\\d+")) {
+//			key = Integer.parseInt(operation);
+//		}
 		try {
-			if (key != -1) {
-				db.deleteOperation(key);
-			} else {
+//			if (key != -1) {
+//				db.deleteOperation(key);
+//			} else {
 				db.deleteOperation(operation);
-			}
+//			}
 		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + operation + " not found\"}").build();
 		} catch (DatabaseException ex ) {

@@ -46,7 +46,7 @@ public class EmployeeValidator {
 		if (updatePS == null) {
 			try {
 				updatePS = conn.prepareStatement(
-						"Select Employee.key from Employee where Employee.key <> ? and (BarCodeID = ? or EmpID = ?)");
+						"Select * from Employee where Employee.key <> ? and (BarCodeID = ? or EmpID = ?)");
 			} catch (SQLException e) {
 				errors += e.getMessage() + "\n";
 			}	
@@ -57,7 +57,8 @@ public class EmployeeValidator {
 					updatePS.setString(3, employeeIn.getEmpId());
 					ResultSet rs = updatePS.executeQuery();
 					if (rs.next()) {
-						errors += "Update: Bar Code ID or Emp ID already in use\n";
+						errors += "Update: Bar Code ID or Emp ID already in use: Key = " + rs.getLong("key") + " BC = " + rs.getString("BarCodeID") + 
+								rs.getInt("EmpID") + "\n";
 					}
 					rs.close();
 				} catch (SQLException e) {
