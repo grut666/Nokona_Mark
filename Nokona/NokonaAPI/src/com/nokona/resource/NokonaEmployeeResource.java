@@ -30,24 +30,24 @@ public class NokonaEmployeeResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{user}")
 	public Response getEmployee(@PathParam("user") String user) {
-//		int key = -1;
+		int key = -1;
 		Employee emp;
-//		if (user.matches("\\d+")) {
-//			key = Integer.parseInt(user);
-//		}
+		if (user.matches("\\d+")) {
+			key = Integer.parseInt(user);
+		}
 		try {
-//			if (key != -1) {
-//				emp = db.getEmployee(key);
-//			} else {
+			if (key != -1) {
+				emp = db.getEmployee(key);
+			} else {
 				emp = db.getEmployee(user);
-//			}
-		}catch(	DataNotFoundException ex)	{
+			}
+		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + user + " not found\"}").build();
-		}catch(	DatabaseException ex)		{
+		} catch (DatabaseException ex ) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
-
-	return Response.status(200).entity(emp).build();
+		
+		return Response.status(200).entity(emp).build();
 	}
 
 	@GET
@@ -80,13 +80,12 @@ public class NokonaEmployeeResource {
 			emp = db.updateEmployee(emp);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
-		} catch (DatabaseException ex) {
+		}catch (DatabaseException ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 
 		return Response.status(200).entity(emp).build();
 	}
-
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	// @Consumes(MediaType.APPLICATION_JSON)
@@ -106,32 +105,31 @@ public class NokonaEmployeeResource {
 			emp = db.addEmployee(emp);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
-		} catch (DatabaseException ex) {
+		}catch (DatabaseException ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
 		return Response.status(200).entity(emp).build();
 	}
-
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{user}")
 	public Response deleteEmployee(@PathParam("user") String user) {
-		// int key = -1;
-		// if (user.matches("\\d+")) {
-		// key = Integer.parseInt(user);
-		// }
+		int key = -1;
+		if (user.matches("\\d+")) {
+			key = Integer.parseInt(user);
+		}
 		try {
-			// if (key != -1) {
-			// db.deleteEmployee(key);
-			// } else {
-			db.deleteEmployee(user);
-			// }
+			if (key != -1) {
+				db.deleteEmployee(key);
+			} else {
+				db.deleteEmployee(user);
+			}
 		} catch (DataNotFoundException ex) {
 			return Response.status(404).entity("{\"error\":\"" + user + " not found\"}").build();
-		} catch (DatabaseException ex) {
+		} catch (DatabaseException ex ) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
 		}
-
+		
 		return Response.status(200).entity("{\"Success\":\"200\"}").build();
 	}
 
