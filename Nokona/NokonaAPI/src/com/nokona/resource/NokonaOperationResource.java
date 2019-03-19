@@ -1,7 +1,6 @@
 package com.nokona.resource;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,9 +13,9 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.nokona.data.NokonaDatabaseEmp;
 import com.nokona.data.NokonaDatabaseOperation;
-import com.nokona.db.NokonaDAOManager;
+import com.nokona.db.NokonaDAOManagerX;
+import com.nokona.db.NokonaDAOOperation;
 import com.nokona.enums.DAOType;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
@@ -25,11 +24,16 @@ import com.nokona.model.Operation;
 
 @Path("/operations")
 public class NokonaOperationResource {
-	@Inject
-	private NokonaDAOManager dbMgr;
-	@Inject @Named("x")
+//	@Inject
+//	private NokonaDAOManager dbMgr;
+//	@Inject @Named("x")
+@Inject
 	private NokonaDatabaseOperation db;
+public NokonaOperationResource() throws DatabaseException  {
+//	db =  (NokonaDatabaseOperation) dbMgr.getDAO(DAOType.OPERATION);
+//	db = new NokonaDAOOperation();
 	
+}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -39,7 +43,7 @@ public class NokonaOperationResource {
 		Operation op;
 		
 		try {
-			getDB();
+//			getDB();
 			
 				op = db.getOperation(operation);
 	
@@ -60,7 +64,7 @@ public class NokonaOperationResource {
 	@Path("/")
 	public Response getOperations() {
 		try {
-			getDB();
+//			getDB();
 			return Response.status(200).entity(db.getOperations()).build();
 		} catch (DatabaseException ex) {
 			return Response.status(404).entity("{\"error\":\"" + ex.getMessage() + "\"}").build();
@@ -85,7 +89,7 @@ public class NokonaOperationResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
-			getDB();
+//			getDB();
 			op = db.updateOperation(op);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
@@ -114,7 +118,7 @@ public class NokonaOperationResource {
 			return Response.status(400).entity(jse.getMessage()).build();
 		}
 		try {
-			getDB();
+//			getDB();
 			op = db.addOperation(op);
 		} catch (DuplicateDataException e) {
 			return Response.status(400).entity(e.getMessage()).build();
@@ -133,7 +137,7 @@ public class NokonaOperationResource {
 		
 		
 		try {
-			getDB();
+//			getDB();
 				db.deleteOperation(operation);
 	
 		} catch (DataNotFoundException ex) {
@@ -147,11 +151,11 @@ public class NokonaOperationResource {
 		
 		return Response.status(200).entity("{\"Success\":\"200\"}").build();
 	}
-	private void getDB() throws DatabaseException {
-
-		if (db == null) {
-			db = (NokonaDatabaseOperation) NokonaDAOManager.getDAO(DAOType.OPERATION);
-		}
-	}
+//	private void getDB() throws DatabaseException {
+//
+//		if (db == null) {
+//			db = (NokonaDatabaseOperation) NokonaDAOManager.getDAO(DAOType.OPERATION);
+//		}
+//	}
 
 }

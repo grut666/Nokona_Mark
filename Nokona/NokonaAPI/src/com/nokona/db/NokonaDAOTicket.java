@@ -7,17 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.nokona.data.NokonaDatabaseEmp;
+import com.nokona.data.NokonaDatabaseTicket;
 import com.nokona.exceptions.DataNotFoundException;
 import com.nokona.exceptions.DatabaseException;
 import com.nokona.exceptions.DuplicateDataException;
 import com.nokona.exceptions.NullInputDataException;
 import com.nokona.formatter.EmployeeFormatter;
 import com.nokona.model.Employee;
+import com.nokona.model.Segment;
+import com.nokona.model.Ticket;
 import com.nokona.validator.EmployeeValidator;
 
 
-public class NokonaDAOEmployee extends NokonaDAO  implements NokonaDatabaseEmp {
-	public NokonaDAOEmployee() throws DatabaseException {
+public class NokonaDAOTicket extends NokonaDAO  implements NokonaDatabaseTicket {
+	public NokonaDAOTicket() throws DatabaseException {
 		super();
 		
 	}
@@ -36,7 +39,7 @@ public class NokonaDAOEmployee extends NokonaDAO  implements NokonaDatabaseEmp {
 	PreparedStatement psDelEmployeeByEmpId;
 
 	
-	@Override
+//	@Override
 	public List<Employee> getEmployees() throws DatabaseException {
 		List<Employee> employees = new ArrayList<Employee>();
 		if (psGetEmployees == null) {
@@ -58,7 +61,7 @@ public class NokonaDAOEmployee extends NokonaDAO  implements NokonaDatabaseEmp {
 		return employees;
 	}
 
-	@Override
+//	@Override
 	public Employee getEmployee(long key) throws DatabaseException {
 		Employee emp = null;
 		if (psGetEmployeeByKey == null) {
@@ -262,6 +265,36 @@ public class NokonaDAOEmployee extends NokonaDAO  implements NokonaDatabaseEmp {
 			System.err.println(e.getMessage());
 			throw new DatabaseException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public List<Segment> getTicketSegment() throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Segment getTicketSegment(long key) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Segment getTicketSegment(String key) throws DatabaseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Ticket addTicket(Ticket ticket) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Ticket getTicket(String ticketIn) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

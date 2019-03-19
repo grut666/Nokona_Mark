@@ -41,12 +41,6 @@ public class NokonaDAO {
 				System.err.println(e.getMessage());
 				throw new DatabaseException(e.getMessage(), e);
 			}
-			// try {
-			// conn.close();
-			// } catch (SQLException e) {
-			// System.err.println(e.getMessage());
-			// throw new DatabaseException(e.getMessage(), e);
-			// }
 		}
 	}
 

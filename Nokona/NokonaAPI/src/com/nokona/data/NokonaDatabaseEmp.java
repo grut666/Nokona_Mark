@@ -5,7 +5,7 @@ import java.util.List;
 import com.nokona.exceptions.DatabaseException;
 import com.nokona.model.Employee;
 
-public interface NokonaDatabaseEmp extends NokonaDatabase {
+public interface NokonaDatabaseEmp  {
 	List<Employee> getEmployees() throws DatabaseException;
 	Employee getEmployee(long key) throws DatabaseException;
 	Employee getEmployee(String empID) throws DatabaseException;
